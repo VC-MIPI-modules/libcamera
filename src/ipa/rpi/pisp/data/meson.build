@@ -24,6 +24,9 @@ conf_files = files([
     'ov9281_mono.json',
     'se327m12.json',
     'uncalibrated.json',
+    'vc_mipi_camera.json',
+    'vc_mipi_camera_mono.json',
+
 ])
 
 install_data(conf_files,
