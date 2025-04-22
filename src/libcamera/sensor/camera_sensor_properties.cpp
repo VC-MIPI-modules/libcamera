@@ -471,6 +471,16 @@ const CameraSensorProperties *CameraSensorProperties::get(const std::string &sen
 			},
 			.sensorDelays = { },
 		} },
+		{ "vc_mipi_camera", {
+			.unitCellSize = { 500, 500 },
+			.testPatternModes = {},
+			.sensorDelays = {
+				.exposureDelay = 2,
+				.gainDelay = 2,
+				.vblankDelay = 2,
+				.hblankDelay = 2
+			},
+		} },
 		{ "vd56g3", {
 			.unitCellSize = { 2610, 2610 },
 			.testPatternModes = {
@@ -485,13 +495,6 @@ const CameraSensorProperties *CameraSensorProperties::get(const std::string &sen
 				 * 5: "Diagonal Gray Scale"
 				 */
 			},
-			.sensorDelays = {
-				.exposureDelay = 2,
-				.gainDelay = 2,
-				.vblankDelay = 2,
-				.hblankDelay = 2
-			},
-		} },
 	};
 
 	const auto it = sensorProps.find(sensor);
