@@ -48,6 +48,11 @@ public:
 	unsigned int mistrustFramesModeSwitch() const override;
 	bool sensorEmbeddedDataPresent() const override;
 
+	std::pair<uint32_t, uint32_t>
+    getBlanking(libcamera::utils::Duration &exposure,
+                libcamera::utils::Duration minFrameDuration,
+                libcamera::utils::Duration maxFrameDuration) const override;
+
 private:
 	/*
 	 * Smallest difference between the frame length and integration time,
@@ -93,21 +98,41 @@ bool CamHelperImxVCCamera::sensorEmbeddedDataPresent() const
 	return false;
 }
 
-// void CamHelperImxVCCamera::populateMetadata(const MdParser::RegisterMap &registers,
-// 				       Metadata &metadata) const
-// {
-// 	DeviceStatus deviceStatus;
+std::pair<uint32_t, uint32_t>
+CamHelperImxVCCamera::getBlanking(libcamera::utils::Duration &exposure,
+                                  libcamera::utils::Duration minFrameDuration,
+                                  libcamera::utils::Duration maxFrameDuration) const
+{
+    using libcamera::utils::Duration;
+    // force hblank = 0 → lineLength = width pixel clocks
+    Duration lineLength = lineLengthPckToDuration(mode_.width);
+    uint32_t frameLengthMin = minFrameDuration / lineLength;
+    uint32_t frameLengthMax = maxFrameDuration / lineLength;
 
-// 	deviceStatus.lineLength = lineLengthPckToDuration(registers.at(lineLengthHiReg) * 256 +
-// 							  registers.at(lineLengthLoReg));
-// 	deviceStatus.exposureTime = exposure(registers.at(expHiReg) * 256 + registers.at(expLoReg),
-// 					     deviceStatus.lineLength);
-// 	LOG(CamHelperImxVCCamera, Error) << "Exposure time: " << deviceStatus.exposureTime.count() << " us";
-// 	deviceStatus.analogueGain = gain(registers.at(gainReg));
-// 	deviceStatus.frameLength = registers.at(frameLengthHiReg) * 256 + registers.at(frameLengthLoReg);
+	LOG(CamHelperImxVCCamera, Info) << "Width:  " << mode_.width 
+	<< " Height: " << mode_.height << " LineLength: " << lineLength
+	<< " FrameLengthMin: " << frameLengthMin
+	<< " FrameLengthMax: " << frameLengthMax;
 
-// 	metadata.set("device.status", deviceStatus);
-// }
+
+    // limit exposureLines so we don’t overflow
+    uint32_t exposureLines = std::min<uint32_t>(
+        exposure / lineLength,
+        std::numeric_limits<uint32_t>::max() - frameIntegrationDiff
+    );
+
+    uint32_t frameLengthLines = std::clamp<uint32_t>(
+        exposureLines + frameIntegrationDiff, frameLengthMin, frameLengthMax
+    );
+
+    uint32_t vblank = frameLengthLines - mode_.height;
+    // recalc actual exposure
+    exposure = CamHelper::exposure(exposureLines, lineLength);
+	LOG(CamHelperImxVCCamera, Info) << "FrameLengthLines: " << frameLengthLines 
+	<< " VBlank: " << vblank << " Exposure: " << exposure
+	<< " ExposureLines: " << exposureLines;
+    return { vblank, 0 };
+}
 
 static CamHelper *create()
 {
