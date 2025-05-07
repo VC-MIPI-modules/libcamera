@@ -109,7 +109,7 @@ CamHelperImxVCCamera::getBlanking(libcamera::utils::Duration &exposure,
     uint32_t frameLengthMin = minFrameDuration / lineLength;
     uint32_t frameLengthMax = maxFrameDuration / lineLength;
 
-	LOG(CamHelperImxVCCamera, Info) << "Width:  " << mode_.width 
+	LOG(CamHelperImxVCCamera, Debug) << "Width:  " << mode_.width 
 	<< " Height: " << mode_.height << " LineLength: " << lineLength
 	<< " FrameLengthMin: " << frameLengthMin
 	<< " FrameLengthMax: " << frameLengthMax;
@@ -128,7 +128,7 @@ CamHelperImxVCCamera::getBlanking(libcamera::utils::Duration &exposure,
     uint32_t vblank = frameLengthLines - mode_.height;
     // recalc actual exposure
     exposure = CamHelper::exposure(exposureLines, lineLength);
-	LOG(CamHelperImxVCCamera, Info) << "FrameLengthLines: " << frameLengthLines 
+	LOG(CamHelperImxVCCamera, Debug) << "FrameLengthLines: " << frameLengthLines 
 	<< " VBlank: " << vblank << " Exposure: " << exposure
 	<< " ExposureLines: " << exposureLines;
     return { vblank, 0 };
