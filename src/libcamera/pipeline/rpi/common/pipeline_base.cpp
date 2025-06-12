@@ -1095,7 +1095,7 @@ bool CameraData::enumerateVideoDevices(MediaLink *link, const std::string &front
 int CameraData::loadPipelineConfiguration()
 {
 	config_ = {
-		.cameraTimeoutValue = 0,
+		.cameraTimeoutValue = 1000,
 	};
 
 	/* Initial configuration of the platform, in case no config file is present */
@@ -1137,9 +1137,9 @@ int CameraData::loadPipelineConfiguration()
 			<< "startup frames are now identified by the FrameMetadata::Status::FrameStartup flag";
 
 	config_.cameraTimeoutValue =
-		phConfig["camera_timeout_value_ms"].get<unsigned int>(config_.cameraTimeoutValue);
+		phConfig["camera_timeout_value_ms"].get<int>(config_.cameraTimeoutValue);
 
-	if (config_.cameraTimeoutValue) {
+	if (config_.cameraTimeoutValue >= 0) {
 		/* Disable the IPA signal to control timeout and set the user requested value. */
 		ipa_->setCameraTimeout.disconnect();
 		frontendDevice()->setDequeueTimeout(config_.cameraTimeoutValue * 1ms);
