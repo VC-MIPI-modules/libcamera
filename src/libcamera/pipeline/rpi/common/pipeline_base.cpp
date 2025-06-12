@@ -883,7 +883,7 @@ int PipelineHandlerBase::registerCamera(std::unique_ptr<RPi::CameraData> &camera
 	 * user-requested value. We do this here now that the IPA and
 	 * front end device are both initialized.
 	 */
-	if (data->config_.cameraTimeoutValue) {
+	if (data->config_.cameraTimeoutValue >= 0) {
 		data->ipa_->setCameraTimeout.disconnect();
 		data->frontendDevice()->setDequeueTimeout(data->config_.cameraTimeoutValue * 1ms);
 	}
@@ -1110,7 +1110,7 @@ bool CameraData::enumerateVideoDevices(MediaLink *link, const std::string &front
 int CameraData::loadPipelineConfiguration()
 {
 	config_ = {
-		.cameraTimeoutValue = 0,
+		.cameraTimeoutValue = 1000,
 		.controllerMinFrameDurationUs = defaultControllerMinimumFrameDurationUs,
 	};
 
@@ -1153,7 +1153,7 @@ int CameraData::loadPipelineConfiguration()
 			<< "startup frames are now identified by the FrameMetadata::Status::FrameStartup flag";
 
 	config_.cameraTimeoutValue =
-		phConfig["camera_timeout_value_ms"].get<unsigned int>(config_.cameraTimeoutValue);
+		phConfig["camera_timeout_value_ms"].get<int>(config_.cameraTimeoutValue);
 
 	config_.controllerMinFrameDurationUs =
 		phConfig["controller_min_frame_duration_us"].get<double>(config_.controllerMinFrameDurationUs);
