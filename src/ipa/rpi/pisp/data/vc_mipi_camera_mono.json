@@ -160,15 +160,7 @@
                     10000, 0.17
                 ]
             }
-        },
-        {
-            "rpi.alsc":
-            {
-                "n_iter": 0,
-                "luminance_strength": 1.0,
-                "corner_strength": 1.5
-            }
-        },
+        },        
         {
             "rpi.contrast":
             {
