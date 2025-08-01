@@ -29,6 +29,8 @@ conf_files = files([
     'ov9281_mono.json',
     'se327m12.json',
     'uncalibrated.json',
+    'vc_mipi_camera.json',
+    'vc_mipi_camera_mono.json',
     'vd56g3.json',
     'vd56g3_mono.json',
 ])
