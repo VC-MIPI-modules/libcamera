@@ -116,44 +116,7 @@ CamHelperImxVCCamera::getBlanking(libcamera::utils::Duration &exposure,
                                   libcamera::utils::Duration minFrameDuration,
                                   libcamera::utils::Duration maxFrameDuration) const
 {
-	if(mode_.width > 4000)
-	{
-		auto [vblank, hblank] = CamHelper::getBlanking(exposure, minFrameDuration, maxFrameDuration);
-		return { vblank, hblank };
-	}
-	else
-	{
-			using libcamera::utils::Duration;
-			// force hblank = 0 → lineLength = width pixel clocks
-			Duration lineLength = lineLengthPckToDuration(mode_.width);
-			uint32_t frameLengthMin = minFrameDuration / lineLength;
-			uint32_t frameLengthMax = maxFrameDuration / lineLength;
-
-			LOG(CamHelperImxVCCamera, Debug) << "Width:  " << mode_.width 
-			<< " Height: " << mode_.height << " LineLength: " << lineLength
-			<< " FrameLengthMin: " << frameLengthMin
-			<< " FrameLengthMax: " << frameLengthMax;
-
-
-			// limit exposureLines so we don’t overflow
-			uint32_t exposureLines = std::min<uint32_t>(
-				exposure / lineLength,
-				std::numeric_limits<uint32_t>::max() - frameIntegrationDiff
-			);
-
-			uint32_t frameLengthLines = std::clamp<uint32_t>(
-				exposureLines + frameIntegrationDiff, frameLengthMin, frameLengthMax
-			);
-
-			uint32_t vblank = frameLengthLines - mode_.height;
-			// recalc actual exposure
-			exposure = CamHelper::exposure(exposureLines, lineLength);
-			LOG(CamHelperImxVCCamera, Debug) << "FrameLengthLines: " << frameLengthLines 
-			<< " VBlank: " << vblank << " Exposure: " << exposure
-			<< " ExposureLines: " << exposureLines;
-			return { vblank, 0 };
-	}
-   
+return CamHelper::getBlanking(exposure, minFrameDuration, maxFrameDuration);
 }
 
 static CamHelper *create()
