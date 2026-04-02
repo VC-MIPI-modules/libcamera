@@ -544,6 +544,13 @@ const CameraSensorProperties *CameraSensorProperties::get(const std::string &sen
 				 * 5: "Diagonal Gray Scale"
 				 */
 			},
+			.sensorDelays = {
+				.exposureDelay = 2,
+				.gainDelay = 2,
+				.vblankDelay = 2,
+				.hblankDelay = 2
+			},
+		} },
 	};
 
 	const auto it = sensorProps.find(sensor);
