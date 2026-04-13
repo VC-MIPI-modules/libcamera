@@ -1110,7 +1110,11 @@ bool CameraData::enumerateVideoDevices(MediaLink *link, const std::string &front
 int CameraData::loadPipelineConfiguration()
 {
 	config_ = {
-		.cameraTimeoutValue = 1000,
+		/*
+		 * Default: no dequeue watchdog (0 = infinite), for external
+		 * trigger mode. Applied in registerCamera() once the IPA exists.
+		 */
+		.cameraTimeoutValue = 0,
 		.controllerMinFrameDurationUs = defaultControllerMinimumFrameDurationUs,
 	};
 
