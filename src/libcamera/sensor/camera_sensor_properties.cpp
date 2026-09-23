@@ -96,6 +96,28 @@ const CameraSensorProperties *CameraSensorProperties::get(const std::string &sen
 				.hblankDelay = 2
 			},
 		} },
+		{ "ar0246", {
+			.unitCellSize = { 2000, 2000 },
+			.testPatternModes = {
+				{ controls::draft::TestPatternModeOff, 0 },
+				{ controls::draft::TestPatternModeSolidColor, 1 },
+				{ controls::draft::TestPatternModeColorBars, 2 },
+				{ controls::draft::TestPatternModeColorBarsFadeToGray, 3 },
+				{ controls::draft::TestPatternModePn9, 4 },
+			},
+			/*
+			 * Measured on the Pi Zero 2 W (unicam) by toggling each
+			 * control while streaming. HBLANK is read-only in the driver,
+			 * so its delay is not measurable; LINE_LENGTH is latched at
+			 * frame start like FRAME_LENGTH, hence the same value.
+			 */
+			.sensorDelays = {
+				.exposureDelay = 2,
+				.gainDelay = 2,
+				.vblankDelay = 1,
+				.hblankDelay = 1
+			},
+		} },
 		{ "ar0521", {
 			.unitCellSize = { 2200, 2200 },
 			.testPatternModes = {
